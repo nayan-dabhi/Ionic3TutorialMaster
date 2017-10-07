@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Segment Page</ion-title>
+  </ion-navbar>
+
+  <ion-toolbar no-border-top>
+    <ion-segment [(ngModel)]="mSelectedViewType" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="list">
+        List View
+      </ion-segment-button>
+      <ion-segment-button value="grid">
+        Grid View
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div [ngSwitch]="mSelectedViewType">
+    <ion-list *ngSwitchCase="'list'">
+      <ion-item *ngFor="let item of mDataList">
+        <ion-avatar item-left *ngIf="item.picture.large != null && item.picture.large !=''">
+          <img src="{{item.picture.large}}" />
+        </ion-avatar>
+
+        <h2> {{item.name.first}} {{item.name.last}}</h2>
+        <!-- <ion-badge>{{item.email}}</ion-badge> -->
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'grid'">
+      <ion-row *ngFor="let i of rows">
+        <ion-col *ngFor="let item of mDataList | slice:(i*2):(i+1)*2" width-50>
+          <ion-card>
+            <ion-avatar item-left *ngIf="item.picture.large != null && item.picture.large !=''">
+              <img src="{{item.picture.large}}" />
+            </ion-avatar>
+
+            <ion-card-content>
+              <ion-card-title>
+                <h6>{{item.name.first}} {{item.name.last}}</h6>
+                <!-- <ion-badge>{{item.email}}</ion-badge> -->
+              </ion-card-title>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+  </div>
+
+  <ion-infinite-scroll (ionInfinite)="loadMoreData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>

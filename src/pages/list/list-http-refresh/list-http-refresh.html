@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <ion-title>Listing With Refresh</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only *ngIf="mSelectedViewType == 'grid'" (click)="changeViewType('list')">
+        <ion-icon name="list"></ion-icon>
+      </button>
+
+      <button ion-button icon-only *ngIf="mSelectedViewType == 'list'" (click)="changeViewType('grid')">
+        <ion-icon name="grid"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div [ngSwitch]="mSelectedViewType">
+    <ion-list *ngSwitchCase="'list'">
+      <ion-item *ngFor="let item of mDataList">
+        <ion-avatar item-left *ngIf="item.picture.large != null && item.picture.large !=''">
+          <img src="{{item.picture.large}}" />
+        </ion-avatar>
+
+        <h2> {{item.name.first}} {{item.name.last}}</h2>
+        <!-- <ion-badge>{{item.email}}</ion-badge> -->
+      </ion-item>
+    </ion-list>
+
+    <ion-grid *ngSwitchCase="'grid'">
+      <ion-row *ngFor="let i of rows">
+        <ion-col *ngFor="let item of mDataList | slice:(i*2):(i+1)*2" width-50>
+          <ion-card>
+            <ion-avatar item-left *ngIf="item.picture.large != null && item.picture.large !=''">
+              <img src="{{item.picture.large}}" />
+            </ion-avatar>
+
+            <ion-card-content>
+              <ion-card-title>
+                <h6>{{item.name.first}} {{item.name.last}}</h6>
+                <!-- <ion-badge>{{item.email}}</ion-badge> -->
+              </ion-card-title>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <ion-infinite-scroll (ionInfinite)="loadMoreData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>
